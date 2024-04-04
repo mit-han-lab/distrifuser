@@ -2,7 +2,7 @@
 
 ### [Paper](http://arxiv.org/abs/2402.19481) | [Project](https://hanlab.mit.edu/projects/distrifusion) | [Blog](https://hanlab.mit.edu/blog/distrifusion)
 
-**[NEW!]** DistriFusion is selected as a highlight poster in CVPR 2024!
+**[NEW!]** DistriFusion is selected as a **highlight** poster in CVPR 2024!
 
 **[NEW!]** DistriFusion is accepted by CVPR 2024! Our code is publicly available!
 
