@@ -229,7 +229,7 @@ class DistriSDPipeline:
             prompt_embeds=None,
             negative_prompt_embeds=None,
             lora_scale=None,
-            clip_skip=pipeline.clip_skip,
+            clip_skip=kwargs.get("clip_skip", None),
         )
 
         batch_size = 2 if distri_config.do_classifier_free_guidance else 1

@@ -3,7 +3,7 @@ import torch
 from distrifuser.pipelines import DistriSDPipeline
 from distrifuser.utils import DistriConfig
 
-distri_config = DistriConfig(height=512, width=512, warmup_steps=4)
+distri_config = DistriConfig(height=512, width=512, warmup_steps=4, mode="stale_gn")
 pipeline = DistriSDPipeline.from_pretrained(
     distri_config=distri_config,
     pretrained_model_name_or_path="CompVis/stable-diffusion-v1-4",
