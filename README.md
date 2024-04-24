@@ -104,6 +104,8 @@ torchrun --nproc_per_node=$N_GPUS scripts/sdxl_example.py
 
 where `$N_GPUS` is the number GPUs you want to use.
 
+We also provide a minimal script for running SD1.4/2 with DistriFusion in [`scripts/sd_example.py`](https://github.com/mit-han-lab/distrifuser/blob/main/scripts/sd_example.py). The usage is the same.
+
 ### Benchmark
 
 Our benchmark results are using [PyTorch](https://pytorch.org) 2.2 and [diffusers](https://github.com/huggingface/diffusers) 0.24.0. First, you may need to install some additional dependencies:
