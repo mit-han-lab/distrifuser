@@ -12,7 +12,7 @@ from distrifuser.modules.pp.groupnorm import DistriGroupNorm
 from ..utils import DistriConfig
 
 
-class DistriSDXLUNetPP(BaseModel):  # for Patch Parallelism
+class DistriUNetPP(BaseModel):  # for Patch Parallelism
     def __init__(self, model: UNet2DConditionModel, distri_config: DistriConfig):
         assert isinstance(model, UNet2DConditionModel)
         if distri_config.world_size > 1 and distri_config.n_device_per_batch > 1:
@@ -39,7 +39,7 @@ class DistriSDXLUNetPP(BaseModel):  # for Patch Parallelism
                         wrapped_submodule = DistriGroupNorm(submodule, distri_config)
                         setattr(module, subname, wrapped_submodule)
 
-        super(DistriSDXLUNetPP, self).__init__(model, distri_config)
+        super(DistriUNetPP, self).__init__(model, distri_config)
 
     def forward(
         self,
@@ -82,8 +82,9 @@ class DistriSDXLUNetPP(BaseModel):  # for Patch Parallelism
                     timestep[batch_idx : batch_idx + 1] if torch.is_tensor(timestep) and timestep.ndim > 0 else timestep
                 )
                 encoder_hidden_states = encoder_hidden_states[batch_idx : batch_idx + 1]
-                for k in added_cond_kwargs:
-                    added_cond_kwargs[k] = added_cond_kwargs[k][batch_idx : batch_idx + 1]
+                if added_cond_kwargs is not None:
+                    for k in added_cond_kwargs:
+                        added_cond_kwargs[k] = added_cond_kwargs[k][batch_idx : batch_idx + 1]
 
             assert static_inputs["sample"].shape == sample.shape
             static_inputs["sample"].copy_(sample)
@@ -99,9 +100,10 @@ class DistriSDXLUNetPP(BaseModel):  # for Patch Parallelism
                     static_inputs["timestep"][b] = timestep
             assert static_inputs["encoder_hidden_states"].shape == encoder_hidden_states.shape
             static_inputs["encoder_hidden_states"].copy_(encoder_hidden_states)
-            for k in added_cond_kwargs:
-                assert static_inputs["added_cond_kwargs"][k].shape == added_cond_kwargs[k].shape
-                static_inputs["added_cond_kwargs"][k].copy_(added_cond_kwargs[k])
+            if added_cond_kwargs is not None:
+                for k in added_cond_kwargs:
+                    assert static_inputs["added_cond_kwargs"][k].shape == added_cond_kwargs[k].shape
+                    static_inputs["added_cond_kwargs"][k].copy_(added_cond_kwargs[k])
 
             if self.counter <= distri_config.warmup_steps:
                 graph_idx = 0
@@ -137,10 +139,11 @@ class DistriSDXLUNetPP(BaseModel):  # for Patch Parallelism
                     timestep[batch_idx : batch_idx + 1] if torch.is_tensor(timestep) and timestep.ndim > 0 else timestep
                 )
                 encoder_hidden_states = encoder_hidden_states[batch_idx : batch_idx + 1]
-                new_added_cond_kwargs = {}
-                for k in added_cond_kwargs:
-                    new_added_cond_kwargs[k] = added_cond_kwargs[k][batch_idx : batch_idx + 1]
-                added_cond_kwargs = new_added_cond_kwargs
+                if added_cond_kwargs is not None:
+                    new_added_cond_kwargs = {}
+                    for k in added_cond_kwargs:
+                        new_added_cond_kwargs[k] = added_cond_kwargs[k][batch_idx : batch_idx + 1]
+                    added_cond_kwargs = new_added_cond_kwargs
                 output = self.model(
                     sample,
                     timestep,

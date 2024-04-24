@@ -1,0 +1,4 @@
+torch>=2.2
+diffusers>=0.24.0
+transformers
+tqdm
