@@ -77,9 +77,9 @@ if __name__ == "__main__":
             # to cuda
             batch = [img.to("cuda") for img in batch]
             batch_size = batch[0].shape[0]
-            psnr_score = psnr(batch[0], batch[1])
+            psnr_score = psnr(batch[0].to(torch.float32), batch[1].to(torch.float32))
             if not torch.isnan(psnr_score) and not torch.isinf(psnr_score):
-                psnr_metric.update(psnr(batch[0], batch[1]).item(), batch_size)
+                psnr_metric.update(psnr(batch[0].to(torch.float32), batch[1].to(torch.float32)).item(), batch_size)
             else:
                 print(i)
                 print("PSNR is nan or inf")
