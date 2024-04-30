@@ -43,7 +43,7 @@ References:
 
 * Python3
 * NVIDIA GPU + CUDA >= 12.0 and corresponding CuDNN
-* [PyTorch](https://pytorch.org) >= 2.2.
+* [PyTorch](https://pytorch.org) = 2.2.
 
 ## Getting Started
 
