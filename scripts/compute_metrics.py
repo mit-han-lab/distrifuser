@@ -6,7 +6,6 @@ import torch
 from cleanfid import fid
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
-from torchmetrics.aggregation import MeanMetric
 from torchmetrics.image import LearnedPerceptualImagePatchSimilarity, PeakSignalNoiseRatio
 from torchvision.transforms import Resize
 from tqdm import tqdm
@@ -52,9 +51,6 @@ class MultiImageDataset(Dataset):
 
 
 if __name__ == "__main__":
-    psnr = PeakSignalNoiseRatio().to("cuda")
-    lpips = LearnedPerceptualImagePatchSimilarity(normalize=True).to("cuda")
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--num_workers", type=int, default=8)
@@ -63,29 +59,21 @@ if __name__ == "__main__":
     parser.add_argument("--input_root1", type=str, required=True)
     args = parser.parse_args()
 
-    psnr_metric = MeanMetric()
-    lpips_metric = MeanMetric()
+    psnr = PeakSignalNoiseRatio(data_range=(0, 1), reduction="elementwise_mean", dim=(1, 2, 3)).to("cuda")
+    lpips = LearnedPerceptualImagePatchSimilarity(normalize=True).to("cuda")
 
     dataset = MultiImageDataset(args.input_root0, args.input_root1, is_gt=args.is_gt)
     dataloader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers)
 
-    # make a json file
-
     progress_bar = tqdm(dataloader)
     with torch.inference_mode():
         for i, batch in enumerate(progress_bar):
-            # to cuda
-            batch = [img.to("cuda") for img in batch]
+            batch = [img.to("cuda") / 255 for img in batch]
             batch_size = batch[0].shape[0]
-            psnr_score = psnr(batch[0].to(torch.float32), batch[1].to(torch.float32))
-            if not torch.isnan(psnr_score) and not torch.isinf(psnr_score):
-                psnr_metric.update(psnr(batch[0].to(torch.float32), batch[1].to(torch.float32)).item(), batch_size)
-            else:
-                print(i)
-                print("PSNR is nan or inf")
-            lpips_metric.update(lpips(batch[0] / 255, batch[1] / 255).item(), batch_size)
+            psnr.update(batch[0], batch[1])
+            lpips.update(batch[0], batch[1])
     fid_score = fid.compute_fid(args.input_root0, args.input_root1)
 
-    print("PSNR:", psnr_metric.compute().item())
-    print("LPIPS:", lpips_metric.compute().item())
+    print("PSNR:", psnr.compute().item())
+    print("LPIPS:", lpips.compute().item())
     print("FID:", fid_score)
