@@ -99,7 +99,7 @@ def main():
             "coco",
             f"{args.scheduler}-{args.num_inference_steps}",
             f"gpus{distri_config.world_size if args.no_split_batch else distri_config.world_size // 2}-"
-            f"warmup{args.warmup_steps}-{args.sync_mode}{'-corrected' if args.add_correction else ''}",
+            f"warmup{args.warmup_steps}-{args.sync_mode}",
         )
     if distri_config.rank == 0:
         os.makedirs(args.output_root, exist_ok=True)
