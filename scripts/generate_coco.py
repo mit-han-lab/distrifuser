@@ -104,7 +104,7 @@ def main():
     if distri_config.rank == 0:
         os.makedirs(args.output_root, exist_ok=True)
 
-    dataset = load_dataset("HuggingFaceM4/COCO", name="2014_captions", split="validation")
+    dataset = load_dataset("HuggingFaceM4/COCO", name="2014_captions", split="validation", trust_remote_code=True)
 
     if args.split is not None:
         assert args.split[0] < args.split[1]
