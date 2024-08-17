@@ -2,11 +2,11 @@
 
 ### [Paper](http://arxiv.org/abs/2402.19481) | [Project](https://hanlab.mit.edu/projects/distrifusion) | [Blog](https://hanlab.mit.edu/blog/distrifusion) | [Slides](https://www.dropbox.com/scl/fi/yv98hi2kdoh27ej4jqlbp/slides.key?rlkey=3rmfxpezqt3co5x2hgqvxv09i&st=ve4z9w6t&dl=0) | [Youtube](https://www.youtube.com/watch?v=EZX7srDDmW0&list=PL80kAHvQbh-pKRxcSS6xjds7U7Yc0gDQI&index=1) | [Poster](https://www.dropbox.com/scl/fi/labhefjwi9r01e3o9eob0/poster.pdf?rlkey=rjj1jj179enln92h8kygrftmg&st=0ddego10&dl=0)
 
-**[NEW!]** DistriFusion is supported in [ColossalAI](https://github.com/hpcaitech/ColossalAI/blob/main/colossalai/inference/README.md)!
+**[Jul 29, 2024]** DistriFusion is supported in [ColossalAI](https://github.com/hpcaitech/ColossalAI/blob/main/colossalai/inference/README.md)!
 
-**[NEW!]** DistriFusion is selected as a **highlight** poster in CVPR 2024!
+**[Apr 4, 2024]** DistriFusion is selected as a **highlight** poster in CVPR 2024!
 
-**[NEW!]** DistriFusion is accepted by CVPR 2024! Our code is publicly available!
+**[Feb 29, 2024]** DistriFusion is accepted by CVPR 2024! Our code is publicly available!
 
 ![teaser](https://github.com/mit-han-lab/distrifuser/blob/main/assets/teaser.jpg)
 *We introduce DistriFusion, a training-free algorithm to harness multiple GPUs to accelerate diffusion model inference without sacrificing image quality. Naïve Patch (Overview (b)) suffers from the fragmentation issue due to the lack of patch interaction. The presented examples are generated with SDXL using a 50-step Euler sampler at 1280×1920 resolution, and latency is measured on A100 GPUs.*
