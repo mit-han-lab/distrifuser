@@ -98,7 +98,7 @@ if distri_config.rank == 0:
     image.save("astronaut.png")
 ```
 
-Specifically, our `distrifuser` shares the same APIs as [diffusers](https://github.com/huggingface/diffusers) and can be used in a similar way. You just need to define a `DistriFusion` and use our wrapped `DistriSDXLPipeline` to load the pretrained SDXL model. Then, we can generate the image like the  `StableDiffusionXLPipeline` in [diffusers](https://github.com/huggingface/diffusers). The running command is
+Specifically, our `distrifuser` shares the same APIs as [diffusers](https://github.com/huggingface/diffusers) and can be used in a similar way. You just need to define a `DistriConfig` and use our wrapped `DistriSDXLPipeline` to load the pretrained SDXL model. Then, we can generate the image like the  `StableDiffusionXLPipeline` in [diffusers](https://github.com/huggingface/diffusers). The running command is
 
 ```shell
 torchrun --nproc_per_node=$N_GPUS scripts/sdxl_example.py
