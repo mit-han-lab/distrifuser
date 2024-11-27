@@ -37,7 +37,10 @@ class DistriSDXLPipeline:
             raise ValueError(f"Unknown parallelism: {distri_config.parallelism}")
 
         pipeline = StableDiffusionXLPipeline.from_pretrained(
-            pretrained_model_name_or_path, torch_dtype=torch_dtype, unet=unet, **kwargs
+            pretrained_model_name_or_path, 
+            torch_dtype=torch_dtype, 
+            unet=unet, 
+            **kwargs
         ).to(device)
         return DistriSDXLPipeline(pipeline, distri_config)
 

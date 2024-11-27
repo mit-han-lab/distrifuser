@@ -1,5 +1,6 @@
 import torch.cuda
-from diffusers.models.resnet import Downsample2D, ResnetBlock2D, Upsample2D, USE_PEFT_BACKEND
+from diffusers.models.resnet import Downsample2D, ResnetBlock2D, Upsample2D
+from diffusers.utils import USE_PEFT_BACKEND
 from torch import distributed as dist
 from torch import nn
 from torch.nn import functional as F
@@ -192,7 +193,8 @@ class DistriResnetBlock2DTP(BaseModule):
 
         if module.conv_shortcut is not None:
             input_tensor = (
-                module.conv_shortcut(input_tensor, scale) if not USE_PEFT_BACKEND else self.conv_shortcut(input_tensor)
+                # module.conv_shortcut(input_tensor, scale)
+                module.conv_shortcut(input_tensor) * scale if not USE_PEFT_BACKEND else self.conv_shortcut(input_tensor)
             )
 
         output_tensor = (input_tensor + hidden_states) / module.output_scale_factor

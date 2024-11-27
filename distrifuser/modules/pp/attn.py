@@ -64,9 +64,13 @@ class DistriCrossAttentionPP(DistriAttentionPP):
             hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
         )
 
-        args = () if USE_PEFT_BACKEND else (scale,)
-        query = attn.to_q(hidden_states, *args)
-
+        # Handle scale parameter based on PEFT backend
+        if USE_PEFT_BACKEND:
+            query = attn.to_q(hidden_states)
+        else:
+            query = attn.to_q(hidden_states)
+            query = query * scale
+        
         if encoder_hidden_states is None:
             encoder_hidden_states = hidden_states
 
@@ -117,8 +121,14 @@ class DistriSelfAttentionPP(DistriAttentionPP):
 
         batch_size, sequence_length, _ = hidden_states.shape
 
-        args = () if USE_PEFT_BACKEND else (scale,)
-        query = attn.to_q(hidden_states, *args)
+        # args = () if USE_PEFT_BACKEND else (scale,)
+        # query = attn.to_q(hidden_states, *args)
+
+        if USE_PEFT_BACKEND:
+            query = attn.to_q(hidden_states)
+        else:
+            query = attn.to_q(hidden_states)
+            query = query * scale
 
         encoder_hidden_states = hidden_states
 
@@ -156,7 +166,13 @@ class DistriSelfAttentionPP(DistriAttentionPP):
         hidden_states = hidden_states.to(query.dtype)
 
         # linear proj
-        hidden_states = attn.to_out[0](hidden_states, *args)
+        # hidden_states = attn.to_out[0](hidden_states, *args)
+
+        if USE_PEFT_BACKEND:
+            hidden_states = attn.to_out[0](hidden_states)
+        else:
+            hidden_states = attn.to_out[0](hidden_states)
+            hidden_states = hidden_states * scale
         # dropout
         hidden_states = attn.to_out[1](hidden_states)
 
