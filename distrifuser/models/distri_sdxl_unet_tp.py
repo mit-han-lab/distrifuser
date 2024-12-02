@@ -2,7 +2,7 @@ import torch
 from diffusers import UNet2DConditionModel
 from diffusers.models.attention import Attention, FeedForward
 from diffusers.models.resnet import ResnetBlock2D
-from diffusers.models.unet_2d_condition import UNet2DConditionOutput
+from diffusers.models.unets.unet_2d_condition import UNet2DConditionOutput
 from torch import distributed as dist, nn
 
 from distrifuser.modules.base_module import BaseModule
@@ -157,7 +157,11 @@ class DistriUNetTP(BaseModel):  # for Patch Parallelism
                 if self.buffer_list is None:
                     self.buffer_list = [torch.empty_like(output) for _ in range(2)]
                 dist.all_gather(
-                    self.buffer_list, output.contiguous(), group=distri_config.split_group(), async_op=False
+                    self.buffer_list, output.contiguous(), 
+                    group=distri_config.split_group, 
+                    # original code
+                    # group=distri_config.split_group(), 
+                    async_op=False
                 )
                 torch.cat(self.buffer_list, dim=0, out=self.output_buffer)
                 output = self.output_buffer
